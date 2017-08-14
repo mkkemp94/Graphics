@@ -63,7 +63,7 @@ public class Graphics extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		texture.dispose();
+		//texture.dispose();
 		textureAtlas.dispose();
 	}
 
