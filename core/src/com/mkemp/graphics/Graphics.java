@@ -9,23 +9,43 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Timer;
 
 public class Graphics extends ApplicationAdapter {
 	private SpriteBatch batch;
+	private TextureAtlas textureAtlas;
 	private Sprite sprite;
+	private int currentFrame = 1;
+	private String currentAtlasKey = new String("0001");
 
 	private Texture texture;
 	private Pixmap pixmap;
-
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 
-		texture = new Texture(Gdx.files.internal("data/jet.png"));
-		//createPixmapTexture();
+		//texture = new Texture(Gdx.files.internal("data/jet.png")); // load from texture
+		//createPixmapTexture(); // OR load pixmap into texture
+		//sprite = new Sprite(texture); // used for both above
 
-		sprite = new Sprite(texture);
+		textureAtlas = new TextureAtlas(Gdx.files.internal("data/spritesheet.atlas"));
+		TextureAtlas.AtlasRegion region = textureAtlas.findRegion("0001");
+		sprite = new Sprite(region);
+		sprite.setPosition(120, 100);
+		sprite.scale(2.5f);
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+				currentFrame++;
+				if (currentFrame > 20)
+					currentFrame = 1;
+
+				currentAtlasKey = String.format("%04d", currentFrame);
+				sprite.setRegion(textureAtlas.findRegion(currentAtlasKey));
+			}
+		}
+		,0,1/30.0f);
 	}
 
 	@Override
@@ -44,6 +64,7 @@ public class Graphics extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 		texture.dispose();
+		textureAtlas.dispose();
 	}
 
 	/**
